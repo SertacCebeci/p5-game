@@ -11,7 +11,7 @@ function resetGame() {
     enemies: [],
     projectiles: [],
     orbs: [],
-    blades: {
+    blades: { // legacy fields (not used directly; blades derive from spell level)
       count: 0,
       radius: 40,
       damage: 6,
@@ -42,10 +42,9 @@ function resetGame() {
       exp: 0,
       expToLevel: 30
     },
-    upgrades: { // current modifiers
-      rapidFireStacks: 0,
-      pierce: 0,
-      damageMult: 1.0
+    spells: {
+      magicBolt: { level: 1 },
+      blades: { level: 0 }
     },
     pendingChoices: []
   };

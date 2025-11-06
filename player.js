@@ -22,6 +22,7 @@ function autoShoot() {
   const p = game.player;
   if (game.enemies.length === 0) return;
   if (p.fireCooldown > 0) return;
+  const stats = getMagicBoltStats(game.spells.magicBolt.level);
   let nearest = null;
   let bestDist = Infinity;
   for (const e of game.enemies) {
@@ -35,25 +36,23 @@ function autoShoot() {
   const dx = nearest.x - p.x;
   const dy = nearest.y - p.y;
   const d = sqrt(dx * dx + dy * dy) || 1;
-  const vx = (dx / d) * p.bulletSpeed;
-  const vy = (dy / d) * p.bulletSpeed;
+  const vx = (dx / d) * stats.speed;
+  const vy = (dy / d) * stats.speed;
 
   const proj = {
     x: p.x,
     y: p.y,
     vx,
     vy,
-    radius: 6,
-    damage: round(p.damage * game.upgrades.damageMult),
-    pierce: p.pierce + game.upgrades.pierce,
+    radius: stats.radius,
+    damage: stats.damage,
+    pierce: stats.pierce,
     alive: true,
-    color: color(255, 235, 140)
+    color: stats.color
   };
   game.projectiles.push(proj);
 
-  const base = p.fireCooldownMax;
-  const mult = 1 / (1 + 0.18 * game.upgrades.rapidFireStacks);
-  p.fireCooldown = max(6, round(base * mult));
+  p.fireCooldown = stats.cooldownFrames;
 }
 
 function renderPlayer() {

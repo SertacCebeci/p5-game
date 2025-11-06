@@ -11,17 +11,21 @@ function checkLevelUp() {
 }
 
 function rollUpgradeChoices() {
-  const pool = [
-    { id: 'rapidFire', name: 'Rapid Fire', desc: 'Faster shooting (+18%)', apply: () => game.upgrades.rapidFireStacks++ },
-    { id: 'pierce', name: 'Pierce', desc: '+1 bullet pierce', apply: () => game.upgrades.pierce++ },
-    { id: 'damageUp', name: 'Damage Up', desc: '+20% bullet damage', apply: () => game.upgrades.damageMult *= 1.2 },
-    { id: 'orbitBlade', name: 'Orbit Blade', desc: '+1 rotating blade', apply: () => game.blades.count = min(6, game.blades.count + 1) }
-  ];
-  const picks = [];
-  for (let i = 0; i < 3; i++) {
-    picks.push(random(pool));
-  }
-  return picks;
+  const mbLvl = game.spells.magicBolt.level;
+  const blLvl = game.spells.blades.level;
+  const boltChoice = {
+    id: 'magicBolt',
+    name: 'Magic Bolt',
+    desc: `Increase Magic Bolt to Lv ${mbLvl + 1}`,
+    apply: () => { game.spells.magicBolt.level++; }
+  };
+  const bladesChoice = {
+    id: 'magicBlades',
+    name: 'Magic Blades',
+    desc: `Increase Magic Blades to Lv ${blLvl + 1}`,
+    apply: () => { game.spells.blades.level++; }
+  };
+  return [boltChoice, bladesChoice];
 }
 
 function chooseUpgrade(index) {
@@ -44,7 +48,7 @@ function renderLevelUpModal() {
   fill(255);
   textAlign(CENTER, TOP);
   textSize(18);
-  text('Choose an upgrade', width / 2, py + 16);
+  text('Choose a spell to level up', width / 2, py + 16);
 
   const num = game.pendingChoices.length;
   const gap = 20;

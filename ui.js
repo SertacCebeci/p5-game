@@ -30,7 +30,10 @@ function renderUI() {
   textAlign(LEFT, TOP);
   textSize(12);
   fill(200);
-  text(`Pierce: ${p.pierce + game.upgrades.pierce}  DMG x${nf(game.upgrades.damageMult, 1, 2)}  FireRate +${round(game.upgrades.rapidFireStacks * 18)}%  Blades: ${game.blades.count}`, 20, 42);
+  const mb = getMagicBoltStats(game.spells.magicBolt.level);
+  const blLvl = game.spells.blades.level;
+  const bl = getBladesStats(blLvl);
+  text(`Magic Bolt Lv ${game.spells.magicBolt.level} (DMG ${mb.damage}, CD ${mb.cooldownFrames}f, Pierce ${mb.pierce})   Magic Blades Lv ${blLvl} (Count ${bl.count})`, 20, 42);
 }
 
 function renderGameOver() {
