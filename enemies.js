@@ -27,7 +27,8 @@ function spawnEnemy() {
     radius: 12,
     speed: baseSpeed,
     hp: round(baseHp),
-    value: 4 + floor(random(3)), // exp value
+    value: 8 + floor(random(5)), // exp orb value (increased)
+    killExp: 1, // small direct EXP on kill
     alive: true,
     color: color(180, 70, 70),
     lastHitPlayerFrame: -999,

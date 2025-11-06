@@ -25,6 +25,10 @@ function updateBlades() {
       e._lastMagicBladesHitFrame = game.frame;
       if (e.hp <= 0) {
         e.alive = false;
+        // small direct EXP on kill
+        if (game && game.player) {
+          game.player.exp += (e.killExp ?? 1);
+        }
         dropOrb(e.x, e.y, e.value);
       }
     }
@@ -57,7 +61,7 @@ function getBladesStats(level) {
   const lvl = max(0, floor(level || 0));
   const count = min(6, lvl);
   const radius = 40 + max(0, (lvl - 1)) * 2;
-  const damage = 6 + lvl * 2;
+  const damage = 10 + lvl * 3;
   const hitCooldownFrames = max(6, 18 - floor(lvl / 2));
   return { count, radius, damage, hitCooldownFrames };
 }

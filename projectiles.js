@@ -15,6 +15,10 @@ function updateProjectiles() {
         e.hp -= pr.damage;
         if (e.hp <= 0) {
           e.alive = false;
+          // small direct EXP on kill
+          if (game && game.player) {
+            game.player.exp += (e.killExp ?? 1);
+          }
           dropOrb(e.x, e.y, e.value);
         }
         if (pr.pierce > 0) {
@@ -41,7 +45,7 @@ function renderProjectiles() {
 // Magic Bolt spell stats derived from level
 function getMagicBoltStats(level) {
   const lvl = max(1, floor(level || 1));
-  const baseDamage = 14;
+  const baseDamage = 22;
   const baseCooldown = 30; // frames
   const baseSpeed = 7;
   const radius = 6;
