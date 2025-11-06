@@ -1,4 +1,4 @@
-// Rotating blades logic and rendering
+// Magic Blades: update loop, rendering, and stats
 function updateBlades() {
   const lvl = game.spells && game.spells.blades ? game.spells.blades.level : 0;
   if (lvl <= 0) return;
@@ -18,9 +18,11 @@ function updateBlades() {
         hit = true; break;
       }
     }
-    if (hit && (game.frame - e.lastBladeHitFrame > b.hitCooldownFrames)) {
+    // Use module-scoped cooldown tracking without requiring enemy initialization
+    const lastHitFrame = e._lastMagicBladesHitFrame ?? -1e9;
+    if (hit && (game.frame - lastHitFrame > b.hitCooldownFrames)) {
       e.hp -= b.damage;
-      e.lastBladeHitFrame = game.frame;
+      e._lastMagicBladesHitFrame = game.frame;
       if (e.hp <= 0) {
         e.alive = false;
         dropOrb(e.x, e.y, e.value);
@@ -59,4 +61,5 @@ function getBladesStats(level) {
   const hitCooldownFrames = max(6, 18 - floor(lvl / 2));
   return { count, radius, damage, hitCooldownFrames };
 }
+
 

@@ -11,12 +11,6 @@ function resetGame() {
     enemies: [],
     projectiles: [],
     orbs: [],
-    blades: { // legacy fields (not used directly; blades derive from spell level)
-      count: 0,
-      radius: 40,
-      damage: 6,
-      hitCooldownFrames: 18
-    },
     spawn: {
       baseInterval: 70,
       minInterval: 18,

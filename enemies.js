@@ -31,7 +31,6 @@ function spawnEnemy() {
     alive: true,
     color: color(180, 70, 70),
     lastHitPlayerFrame: -999,
-    lastBladeHitFrame: -999
   };
   game.enemies.push(enemy);
 }
