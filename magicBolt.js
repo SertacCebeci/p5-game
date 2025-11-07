@@ -33,7 +33,7 @@ function updateMagicBoltSpell() {
     y: p.y,
     vx: (dx / d) * stats.speed,
     vy: (dy / d) * stats.speed,
-    stats
+    stats,
   });
 
   game.projectiles.push(projectile);
@@ -50,7 +50,8 @@ function createMagicBoltProjectile({ x, y, vx, vy, stats }) {
     damage: stats.damage,
     pierce: stats.pierce,
     alive: true,
-    color: stats.color
+    color: stats.color,
+    hitEnemies: new Set(), // Track which enemies have been hit
   };
 }
 
@@ -64,13 +65,13 @@ function getMagicBoltStats(level) {
   const damage = round(baseDamage * pow(1.2, lvl - 1));
   const cooldown = max(6, round(baseCooldown * pow(0.92, lvl - 1)));
   const speed = baseSpeed + floor((lvl - 1) / 2);
-  const pierce = floor((lvl - 1) / 3);
+  const pierce = floor((lvl - 1) / 1);
   return {
     damage,
     cooldownFrames: cooldown,
     speed,
     radius,
     pierce,
-    color: color(255, 235, 140)
+    color: color(255, 235, 140),
   };
 }
