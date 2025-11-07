@@ -1,10 +1,11 @@
 // Projectiles update and rendering
 function updateProjectiles() {
+  const cullBounds = getWorldViewBounds(400);
   for (const pr of game.projectiles) {
     if (!pr.alive) continue;
     pr.x += pr.vx;
     pr.y += pr.vy;
-    if (pr.x < -20 || pr.x > width + 20 || pr.y < -20 || pr.y > height + 20) {
+    if (pr.x < cullBounds.left || pr.x > cullBounds.right || pr.y < cullBounds.top || pr.y > cullBounds.bottom) {
       pr.alive = false;
       continue;
     }

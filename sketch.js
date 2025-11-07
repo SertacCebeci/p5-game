@@ -18,6 +18,7 @@ function draw() {
 
 function updateGame() {
   handleInput();
+  updateCamera();
   autoShoot();
   updateProjectiles();
   maybeSpawnEnemies();
@@ -31,16 +32,59 @@ function updateGame() {
 }
 
 function renderGame() {
+  push();
+  applyCameraTransform();
+  renderWorldBackground();
   renderOrbs();
   renderEnemies();
   renderProjectiles();
   renderPlayer();
   renderBlades();
+  pop();
+
   renderUI();
   if (game.state === 'levelup') {
     renderLevelUpModal();
   } else if (game.state === 'gameover') {
     renderGameOver();
   }
+}
+
+function updateCamera() {
+  const cam = game.camera;
+  const p = game.player;
+  cam.x = p.x;
+  cam.y = p.y;
+}
+
+function applyCameraTransform() {
+  const cam = game.camera;
+  translate(width / 2 - cam.x, height / 2 - cam.y);
+}
+
+function renderWorldBackground() {
+  const gridSize = 120;
+  const bounds = getWorldViewBounds(200);
+
+  push();
+  rectMode(CORNER);
+  noStroke();
+  fill(26);
+  rect(bounds.left, bounds.top, bounds.right - bounds.left, bounds.bottom - bounds.top);
+
+  stroke(45);
+  strokeWeight(1);
+  const startX = floor(bounds.left / gridSize) * gridSize;
+  const endX = ceil(bounds.right / gridSize) * gridSize;
+  for (let x = startX; x <= endX; x += gridSize) {
+    line(x, bounds.top, x, bounds.bottom);
+  }
+
+  const startY = floor(bounds.top / gridSize) * gridSize;
+  const endY = ceil(bounds.bottom / gridSize) * gridSize;
+  for (let y = startY; y <= endY; y += gridSize) {
+    line(bounds.left, y, bounds.right, y);
+  }
+  pop();
 }
 // Rendering delegations remain here for composition

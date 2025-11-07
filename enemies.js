@@ -13,13 +13,27 @@ function maybeSpawnEnemies() {
 }
 
 function spawnEnemy() {
-  const margin = 30;
+  const margin = 160;
+  const view = getWorldViewBounds();
+  const left = view.left - margin;
+  const right = view.right + margin;
+  const top = view.top - margin;
+  const bottom = view.bottom + margin;
   const edge = floor(random(4));
   let x = 0, y = 0;
-  if (edge === 0) { x = random(-margin, 0); y = random(height); }
-  else if (edge === 1) { x = random(width); y = random(-margin, 0); }
-  else if (edge === 2) { x = random(width, width + margin); y = random(height); }
-  else { x = random(width); y = random(height, height + margin); }
+  if (edge === 0) {
+    x = random(left, right);
+    y = random(top, view.top);
+  } else if (edge === 1) {
+    x = random(view.right, right);
+    y = random(top, bottom);
+  } else if (edge === 2) {
+    x = random(left, right);
+    y = random(view.bottom, bottom);
+  } else {
+    x = random(left, view.left);
+    y = random(top, bottom);
+  }
   const baseHp = 20 + game.timeSeconds * 2.5;
   const baseSpeed = 1.1 + min(1.4, game.timeSeconds / 90);
   const enemy = {
@@ -59,7 +73,8 @@ function updateEnemies() {
       }
     }
   }
-  game.enemies = game.enemies.filter(e => e.alive || inBounds(e.x, e.y, -40, -40, width + 40, height + 40));
+  const cullBounds = getWorldViewBounds(800);
+  game.enemies = game.enemies.filter(e => e.alive || inBounds(e.x, e.y, cullBounds.left, cullBounds.top, cullBounds.right, cullBounds.bottom));
 }
 
 function renderEnemies() {
