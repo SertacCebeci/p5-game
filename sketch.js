@@ -19,7 +19,7 @@ function draw() {
 function updateGame() {
   handleInput();
   updateCamera();
-  autoShoot();
+  updateMagicBolt();
   updateProjectiles();
   maybeSpawnEnemies();
   updateEnemies();
