@@ -10,27 +10,20 @@ function updateBlades() {
     // Check against each blade's position
     let hit = false;
     for (let k = 0; k < b.count; k++) {
-      const angle = (game.frame * 0.06) + (TWO_PI * k / b.count);
+      const angle = game.frame * 0.06 + (TWO_PI * k) / b.count;
       const bx = p.x + cos(angle) * b.radius;
       const by = p.y + sin(angle) * b.radius;
       const sumR = e.radius + 6;
       if ((bx - e.x) ** 2 + (by - e.y) ** 2 <= sumR * sumR) {
-        hit = true; break;
+        hit = true;
+        break;
       }
     }
     // Use module-scoped cooldown tracking without requiring enemy initialization
     const lastHitFrame = e._lastMagicBladesHitFrame ?? -1e9;
-    if (hit && (game.frame - lastHitFrame > b.hitCooldownFrames)) {
-      e.hp -= b.damage;
+    if (hit && game.frame - lastHitFrame > b.hitCooldownFrames) {
+      damageEnemy(e, b.damage);
       e._lastMagicBladesHitFrame = game.frame;
-      if (e.hp <= 0) {
-        e.alive = false;
-        // small direct EXP on kill
-        if (game && game.player) {
-          game.player.exp += (e.killExp ?? 1);
-        }
-        dropOrb(e.x, e.y, e.value);
-      }
     }
   }
 }
@@ -44,7 +37,7 @@ function renderBlades() {
   strokeWeight(3);
   noFill();
   for (let k = 0; k < b.count; k++) {
-    const angle = (game.frame * 0.06) + (TWO_PI * k / b.count);
+    const angle = game.frame * 0.06 + (TWO_PI * k) / b.count;
     const bx = p.x + cos(angle) * b.radius;
     const by = p.y + sin(angle) * b.radius;
     line(p.x, p.y, bx, by);
@@ -60,10 +53,8 @@ function renderBlades() {
 function getBladesStats(level) {
   const lvl = max(0, floor(level || 0));
   const count = min(6, lvl);
-  const radius = 40 + max(0, (lvl - 1)) * 2;
+  const radius = 40 + max(0, lvl - 1) * 2;
   const damage = 10 + lvl * 3;
   const hitCooldownFrames = max(6, 18 - floor(lvl / 2));
   return { count, radius, damage, hitCooldownFrames };
 }
-
-

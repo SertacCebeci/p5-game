@@ -5,22 +5,24 @@ function resetGame() {
   noiseSeed(rngSeed);
 
   game = {
-    state: 'playing', // 'playing' | 'levelup' | 'gameover'
+    state: "weaponSelect", // 'weaponSelect' | 'playing' | 'levelup' | 'gameover'
     frame: 0,
     timeSeconds: 0,
     enemies: [],
     projectiles: [],
+    boomerangProjectiles: [],
     orbs: [],
+    buffOrbs: [],
     spawn: {
       baseInterval: 70,
       minInterval: 18,
       interval: 70,
       lastSpawnFrame: 0,
-      difficulty: 0 // increases slowly over time
+      difficulty: 0, // increases slowly over time
     },
     camera: {
       x: 0,
-      y: 0
+      y: 0,
     },
     player: {
       x: 0,
@@ -33,18 +35,26 @@ function resetGame() {
       iframes: 0,
       level: 1,
       exp: 0,
-      expToLevel: 30
+      expToLevel: 30,
+      activeBuffs: [],
+      pickupRadius: 90, // Base pickup radius for orbs
     },
     spells: {
-      magicBolt: { level: 1, cooldown: 0 },
-      blades: { level: 0 }
+      magicBolt: { level: 0, cooldown: 0 },
+      blades: { level: 0 },
+      sniperRifle: { level: 0, cooldown: 0 },
+      boomerang: { level: 0, cooldown: 0 },
     },
-    pendingChoices: []
+    passives: {
+      pickupRadius: { level: 0 },
+    },
+    pendingChoices: [],
   };
 
   input = {
-    up: false, down: false, left: false, right: false
+    up: false,
+    down: false,
+    left: false,
+    right: false,
   };
 }
-
-

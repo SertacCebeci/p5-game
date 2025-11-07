@@ -20,7 +20,8 @@ function spawnEnemy() {
   const top = view.top - margin;
   const bottom = view.bottom + margin;
   const edge = floor(random(4));
-  let x = 0, y = 0;
+  let x = 0,
+    y = 0;
   if (edge === 0) {
     x = random(left, right);
     y = random(top, view.top);
@@ -37,15 +38,19 @@ function spawnEnemy() {
   const baseHp = 20 + game.timeSeconds * 2.5;
   const baseSpeed = 1.1 + min(1.4, game.timeSeconds / 90);
   const enemy = {
-    x, y,
+    x,
+    y,
     radius: 12,
     speed: baseSpeed,
+    baseSpeed: baseSpeed, // store original speed
     hp: round(baseHp),
     value: 8 + floor(random(5)), // exp orb value (increased)
     killExp: 1, // small direct EXP on kill
     alive: true,
     color: color(180, 70, 70),
     lastHitPlayerFrame: -999,
+    slowdownFrames: 0, // frames remaining for slowdown effect
+    slowdownFactor: 1.0, // speed multiplier (1.0 = normal, 0.5 = half speed)
   };
   game.enemies.push(enemy);
 }
@@ -54,11 +59,21 @@ function updateEnemies() {
   const p = game.player;
   for (const e of game.enemies) {
     if (!e.alive) continue;
+
+    // Update slowdown effect
+    if (e.slowdownFrames > 0) {
+      e.slowdownFrames--;
+      if (e.slowdownFrames === 0) {
+        e.slowdownFactor = 1.0; // restore normal speed
+      }
+    }
+
     const dx = p.x - e.x;
     const dy = p.y - e.y;
     const d = sqrt(dx * dx + dy * dy) || 1;
-    e.x += (dx / d) * e.speed;
-    e.y += (dy / d) * e.speed;
+    const effectiveSpeed = e.speed * e.slowdownFactor;
+    e.x += (dx / d) * effectiveSpeed;
+    e.y += (dy / d) * effectiveSpeed;
     // Player collision
     const sumR = e.radius + p.radius;
     if ((p.x - e.x) ** 2 + (p.y - e.y) ** 2 <= sumR * sumR) {
@@ -66,15 +81,28 @@ function updateEnemies() {
         p.hp -= 10;
         p.iframes = 24;
         e.lastHitPlayerFrame = game.frame;
-        const nx = (p.x - e.x) / (sqrt((p.x - e.x) ** 2 + (p.y - e.y) ** 2) || 1);
-        const ny = (p.y - e.y) / (sqrt((p.x - e.x) ** 2 + (p.y - e.y) ** 2) || 1);
+        const nx =
+          (p.x - e.x) / (sqrt((p.x - e.x) ** 2 + (p.y - e.y) ** 2) || 1);
+        const ny =
+          (p.y - e.y) / (sqrt((p.x - e.x) ** 2 + (p.y - e.y) ** 2) || 1);
         p.x += nx * 10;
         p.y += ny * 10;
       }
     }
   }
   const cullBounds = getWorldViewBounds(800);
-  game.enemies = game.enemies.filter(e => e.alive || inBounds(e.x, e.y, cullBounds.left, cullBounds.top, cullBounds.right, cullBounds.bottom));
+  game.enemies = game.enemies.filter(
+    (e) =>
+      e.alive ||
+      inBounds(
+        e.x,
+        e.y,
+        cullBounds.left,
+        cullBounds.top,
+        cullBounds.right,
+        cullBounds.bottom
+      )
+  );
 }
 
 function renderEnemies() {
@@ -96,7 +124,17 @@ function renderEnemies() {
 
 function damageEnemy(enemy, damage) {
   if (!enemy || !enemy.alive) return false;
-  enemy.hp -= damage;
+
+  // Apply damage multiplier from buffs
+  const multiplier = getDamageMultiplier();
+  const finalDamage = damage * multiplier;
+
+  enemy.hp -= finalDamage;
+
+  // Apply slowdown effect on damage
+  enemy.slowdownFactor = 0.5; // slow to 50% speed
+  enemy.slowdownFrames = 30; // slowdown lasts for 30 frames (about 0.5 seconds at 60fps)
+
   if (enemy.hp <= 0) {
     killEnemy(enemy);
     return true;
@@ -112,5 +150,3 @@ function killEnemy(enemy) {
   }
   dropOrb(enemy.x, enemy.y, enemy.value);
 }
-
-

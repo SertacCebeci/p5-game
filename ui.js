@@ -26,6 +26,23 @@ function renderUI() {
   textSize(12);
   text(`Level ${p.level}`, width / 2, xpY - 4);
 
+  // Active buffs indicator
+  if (p.activeBuffs.length > 0) {
+    let buffY = hpY + hpH + 10;
+    for (const buff of p.activeBuffs) {
+      if (buff.type === 'damage') {
+        const timeLeft = (buff.remainingFrames / 60).toFixed(1);
+        fill(220, 60, 60, 180);
+        rect(hpX, buffY, 160, 20, 4);
+        fill(255);
+        textAlign(LEFT, CENTER);
+        textSize(12);
+        text(`🔥 ${buff.multiplier}x DAMAGE (${timeLeft}s)`, hpX + 6, buffY + 10);
+        buffY += 24;
+      }
+    }
+  }
+
   // Info text
   textAlign(LEFT, TOP);
   textSize(12);
@@ -33,7 +50,33 @@ function renderUI() {
   const mb = getMagicBoltStats(game.spells.magicBolt.level);
   const blLvl = game.spells.blades.level;
   const bl = getBladesStats(blLvl);
-  text(`Magic Bolt Lv ${game.spells.magicBolt.level} (DMG ${mb.damage}, CD ${mb.cooldownFrames}f, Pierce ${mb.pierce})   Magic Blades Lv ${blLvl} (Count ${bl.count})`, 20, 42);
+  const srLvl = game.spells.sniperRifle.level;
+  const boomLvl = game.spells.boomerang.level;
+  
+  let infoY = 42;
+  text(`Magic Bolt Lv ${game.spells.magicBolt.level} (DMG ${mb.damage}, CD ${mb.cooldownFrames}f, Pierce ${mb.pierce})   Magic Blades Lv ${blLvl} (Count ${bl.count})`, 20, infoY);
+  infoY += 16;
+  
+  if (srLvl > 0) {
+    const sr = getSniperRifleStats(srLvl);
+    text(`Sniper Rifle Lv ${srLvl} (DMG ${sr.damage}, CD ${sr.cooldownFrames}f, Pierce ${sr.pierce})`, 20, infoY);
+    infoY += 16;
+  }
+  
+  if (boomLvl > 0) {
+    const boom = getBoomerangStats(boomLvl);
+    text(`Boomerang Lv ${boomLvl} (DMG ${boom.damage}, CD ${boom.cooldownFrames}f, Chains ${boom.chains}x)`, 20, infoY);
+    infoY += 16;
+  }
+  
+  const pickupLvl = game.passives.pickupRadius.level;
+  if (pickupLvl > 0) {
+    const pickup = getPickupRadiusStats(pickupLvl);
+    fill(100, 255, 200); // Green color for passives
+    text(`🧲 Item Magnet Lv ${pickupLvl} (Radius: ${pickup.radius} units)`, 20, infoY);
+    infoY += 16;
+    fill(200); // Reset color
+  }
 }
 
 function renderGameOver() {

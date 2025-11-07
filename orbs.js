@@ -16,7 +16,7 @@ function updateOrbs() {
     const dx = p.x - o.x;
     const dy = p.y - o.y;
     const d = sqrt(dx * dx + dy * dy) || 1;
-    const attractRange = 90;
+    const attractRange = p.pickupRadius; // Use player's pickup radius
     if (d < attractRange) {
       const s = map(d, 0, attractRange, 4, 1);
       o.x += (dx / d) * s;

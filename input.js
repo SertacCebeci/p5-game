@@ -5,6 +5,12 @@ function keyPressed() {
   if (key === 'a' || key === 'A' || keyCode === LEFT_ARROW) input.left = true;
   if (key === 'd' || key === 'D' || keyCode === RIGHT_ARROW) input.right = true;
 
+  if (game.state === 'weaponSelect') {
+    if (key === '1') selectStartingWeapon(0);
+    if (key === '2') selectStartingWeapon(1);
+    if (key === '3') selectStartingWeapon(2);
+    if (key === '4') selectStartingWeapon(3);
+  }
   if (game.state === 'levelup') {
     if (key === '1') chooseUpgrade(0);
     if (key === '2') chooseUpgrade(1);
