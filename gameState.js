@@ -31,17 +31,12 @@ function resetGame() {
       hp: 100,
       maxHp: 100,
       iframes: 0,
-      fireCooldown: 0,
-      fireCooldownMax: 30,
-      damage: 14,
-      bulletSpeed: 7,
-      pierce: 0,
       level: 1,
       exp: 0,
       expToLevel: 30
     },
     spells: {
-      magicBolt: { level: 1 },
+      magicBolt: createMagicBoltState(),
       blades: { level: 0 }
     },
     pendingChoices: []

@@ -50,6 +50,23 @@ function spawnEnemy() {
   game.enemies.push(enemy);
 }
 
+function damageEnemy(enemy, amount) {
+  if (!enemy.alive) return;
+  enemy.hp -= amount;
+  if (enemy.hp <= 0) {
+    killEnemy(enemy);
+  }
+}
+
+function killEnemy(enemy) {
+  if (!enemy.alive) return;
+  enemy.alive = false;
+  if (game && game.player) {
+    game.player.exp += enemy.killExp ?? 0;
+  }
+  dropOrb(enemy.x, enemy.y, enemy.value);
+}
+
 function updateEnemies() {
   const p = game.player;
   for (const e of game.enemies) {
