@@ -1,11 +1,12 @@
 // Experience orbs logic and rendering
 function dropOrb(x, y, value) {
   game.orbs.push({
-    x, y,
+    x,
+    y,
     radius: 6,
     value,
     color: color(100, 200, 255),
-    alive: true
+    alive: true,
   });
 }
 
@@ -28,7 +29,7 @@ function updateOrbs() {
       p.exp += o.value;
     }
   }
-  game.orbs = game.orbs.filter(o => o.alive);
+  game.orbs = game.orbs.filter((o) => o.alive);
 }
 
 function renderOrbs() {
@@ -39,5 +40,3 @@ function renderOrbs() {
     circle(o.x, o.y, o.radius * 2);
   }
 }
-
-

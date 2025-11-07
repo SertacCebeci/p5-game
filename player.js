@@ -1,14 +1,16 @@
 // Player movement, shooting, and rendering
 function handleInput() {
   const p = game.player;
-  let vx = 0, vy = 0;
+  let vx = 0,
+    vy = 0;
   if (input.left) vx -= 1;
   if (input.right) vx += 1;
   if (input.up) vy -= 1;
   if (input.down) vy += 1;
   if (vx !== 0 || vy !== 0) {
     const mag = sqrt(vx * vx + vy * vy);
-    vx /= mag; vy /= mag;
+    vx /= mag;
+    vy /= mag;
     p.x += vx * p.speed;
     p.y += vy * p.speed;
   }
@@ -27,5 +29,3 @@ function renderPlayer() {
     circle(p.x, p.y, p.radius * 2 + 6);
   }
 }
-
-

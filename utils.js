@@ -13,8 +13,6 @@ function getWorldViewBounds(expand = 0) {
     top: cam.y - halfH,
     bottom: cam.y + halfH,
     width: halfW * 2,
-    height: halfH * 2
+    height: halfH * 2,
   };
 }
-
-

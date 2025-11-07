@@ -1,6 +1,6 @@
-// Sniper Rifle spell logic and behaviors
-function updateSniperRifleSpell() {
-  const spell = game.spells && game.spells.sniperRifle;
+// Sniping Bolt spell logic and behaviors
+function updateSnipingBoltSpell() {
+  const spell = game.spells && game.spells.snipingBolt;
   if (!spell || spell.level <= 0) return;
 
   if (spell.cooldown > 0) {
@@ -23,12 +23,12 @@ function updateSniperRifleSpell() {
 
   if (!nearest || spell.cooldown > 0) return;
 
-  const stats = getSniperRifleStats(spell.level);
+  const stats = getSnipingBoltStats(spell.level);
   const dx = nearest.x - p.x;
   const dy = nearest.y - p.y;
   const d = sqrt(dx * dx + dy * dy) || 1;
 
-  const projectile = createSniperRifleProjectile({
+  const projectile = createSnipingBoltProjectile({
     x: p.x,
     y: p.y,
     vx: (dx / d) * stats.speed,
@@ -40,7 +40,7 @@ function updateSniperRifleSpell() {
   spell.cooldown = stats.cooldownFrames;
 }
 
-function createSniperRifleProjectile({ x, y, vx, vy, stats }) {
+function createSnipingBoltProjectile({ x, y, vx, vy, stats }) {
   return {
     x,
     y,
@@ -52,45 +52,45 @@ function createSniperRifleProjectile({ x, y, vx, vy, stats }) {
     alive: true,
     color: stats.color,
     hitEnemies: new Set(), // Track which enemies have been hit
-    type: 'sniper', // Mark as sniper for special rendering
+    type: "snipingBolt", // Mark as sniping bolt for special rendering
   };
 }
 
-// Sniper Rifle spell stats derived from level
-function getSniperRifleStats(level) {
+// Sniping Bolt spell stats derived from level
+function getSnipingBoltStats(level) {
   const lvl = max(1, floor(level || 1));
   const baseDamage = 80; // Very high base damage
   const baseCooldown = 120; // High cooldown (2 seconds at 60fps)
   const baseSpeed = 15; // Very fast projectile
   const radius = 4; // Smaller, bullet-like radius
-  
+
   // Damage increases significantly per level
   const damage = round(baseDamage * pow(1.35, lvl - 1));
-  
+
   // Cooldown decreases noticeably per level
   const cooldown = max(30, round(baseCooldown * pow(0.85, lvl - 1)));
-  
+
   // Speed increases slightly
   const speed = baseSpeed + floor((lvl - 1) / 2);
-  
+
   // Pierce increases every 2 levels
   const pierce = floor((lvl - 1) / 2);
-  
+
   return {
     damage,
     cooldownFrames: cooldown,
     speed,
     radius,
     pierce,
-    color: color(255, 100, 50), // Orange-red for sniper shots
+    color: color(255, 100, 50), // Orange-red for sniping bolt
   };
 }
 
-// Render sniper projectiles with a special trail effect
-function renderSniperProjectiles() {
+// Render sniping bolt projectiles with a special trail effect
+function renderSnipingBoltProjectiles() {
   for (const pr of game.projectiles) {
-    if (!pr.alive || pr.type !== 'sniper') continue;
-    
+    if (!pr.alive || pr.type !== "snipingBolt") continue;
+
     // Draw trail
     stroke(pr.color.levels[0], pr.color.levels[1], pr.color.levels[2], 80);
     strokeWeight(2);
@@ -98,15 +98,14 @@ function renderSniperProjectiles() {
     const trailX = pr.x - pr.vx * (trailLength / pr.vx);
     const trailY = pr.y - pr.vy * (trailLength / pr.vy);
     line(trailX, trailY, pr.x, pr.y);
-    
+
     // Draw bullet
     noStroke();
     fill(255, 200, 100);
     circle(pr.x, pr.y, pr.radius * 2);
-    
+
     // Bright core
     fill(255, 255, 200);
     circle(pr.x, pr.y, pr.radius);
   }
 }
-

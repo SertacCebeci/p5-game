@@ -5,12 +5,12 @@ function resetGame() {
   noiseSeed(rngSeed);
 
   game = {
-    state: "weaponSelect", // 'weaponSelect' | 'playing' | 'levelup' | 'gameover'
+    state: "spellSelect", // 'spellSelect' | 'playing' | 'levelup' | 'gameover'
     frame: 0,
     timeSeconds: 0,
     enemies: [],
     projectiles: [],
-    boomerangProjectiles: [],
+    chainingBoltProjectiles: [],
     orbs: [],
     buffOrbs: [],
     spawn: {
@@ -42,8 +42,8 @@ function resetGame() {
     spells: {
       magicBolt: { level: 0, cooldown: 0 },
       blades: { level: 0 },
-      sniperRifle: { level: 0, cooldown: 0 },
-      boomerang: { level: 0, cooldown: 0 },
+      snipingBolt: { level: 0, cooldown: 0 },
+      chainingBolt: { level: 0, cooldown: 0 },
     },
     passives: {
       pickupRadius: { level: 0 },

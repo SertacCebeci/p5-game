@@ -2,5 +2,3 @@
 let game;
 let input;
 let rngSeed;
-
-

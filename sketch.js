@@ -8,18 +8,18 @@ function setup() {
 
 function draw() {
   background(20);
-  
-  if (game.state === 'weaponSelect') {
-    renderWeaponSelectModal();
+
+  if (game.state === "spellSelect") {
+    renderSpellSelectModal();
     return;
   }
-  
-  if (game.state === 'playing') {
+
+  if (game.state === "playing") {
     updateGame();
     game.frame++;
     game.timeSeconds = game.frame / 60;
   }
-  
+
   renderGame();
 }
 
@@ -28,10 +28,10 @@ function updateGame() {
   updateCamera();
   updatePassives();
   updateMagicBoltSpell();
-  updateSniperRifleSpell();
-  updateBoomerangSpell();
+  updateSnipingBoltSpell();
+  updateChainingBoltSpell();
   updateProjectiles();
-  updateBoomerangProjectiles();
+  updateChainingBoltProjectiles();
   maybeSpawnEnemies();
   updateEnemies();
   updateOrbs();
@@ -39,8 +39,8 @@ function updateGame() {
   updateBuffOrbs();
   updateBlades();
   checkLevelUp();
-  if (game.player.hp <= 0 && game.state !== 'gameover') {
-    game.state = 'gameover';
+  if (game.player.hp <= 0 && game.state !== "gameover") {
+    game.state = "gameover";
   }
 }
 
@@ -52,17 +52,17 @@ function renderGame() {
   renderBuffOrbs();
   renderEnemies();
   renderProjectiles();
-  renderSniperProjectiles();
-  renderBoomerangProjectiles();
+  renderSnipingBoltProjectiles();
+  renderChainingBoltProjectiles();
   renderPlayer();
   renderBlades();
   pop();
 
   renderUI();
-  
-  if (game.state === 'levelup') {
+
+  if (game.state === "levelup") {
     renderLevelUpModal();
-  } else if (game.state === 'gameover') {
+  } else if (game.state === "gameover") {
     renderGameOver();
   }
 }
@@ -87,7 +87,12 @@ function renderWorldBackground() {
   rectMode(CORNER);
   noStroke();
   fill(26);
-  rect(bounds.left, bounds.top, bounds.right - bounds.left, bounds.bottom - bounds.top);
+  rect(
+    bounds.left,
+    bounds.top,
+    bounds.right - bounds.left,
+    bounds.bottom - bounds.top
+  );
 
   stroke(45);
   strokeWeight(1);
