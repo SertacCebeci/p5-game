@@ -50,86 +50,119 @@ function selectStartingSpell(index) {
 
 function renderSpellSelectModal() {
   background(20);
-  fill(0, 200);
+  fill(0, 220);
   rect(0, 0, width, height);
 
-  const panelW = min(800, width - 60);
-  const panelH = 380;
+  const panelW = min(500, width - 60);
+  const panelH = min(height - 60, 850);
   const px = (width - panelW) / 2;
   const py = (height - panelH) / 2;
 
-  // Panel background
-  fill(30);
-  rect(px, py, panelW, panelH, 10);
+  // Panel background with gradient effect
+  fill(25);
+  stroke(60, 80, 120);
+  strokeWeight(2);
+  rect(px, py, panelW, panelH, 12);
+  noStroke();
 
-  // Title
-  fill(100, 200, 255);
+  // Title with glow effect
+  fill(120, 220, 255);
   textAlign(CENTER, TOP);
-  textSize(24);
-  text("Choose Your Starting Spell", width / 2, py + 20);
+  textSize(28);
+  text("Choose Your Starting Spell", width / 2, py + 24);
 
-  fill(200);
-  textSize(14);
-  text("Select wisely - this will be your first spell!", width / 2, py + 52);
+  fill(180, 200, 220);
+  textSize(13);
+  text("Select wisely - this will be your first spell!", width / 2, py + 60);
 
-  // Spell cards
+  // Spell cards - TOP DOWN layout
   const choices = getStartingSpellChoices();
   const num = choices.length;
-  const gap = 16;
-  const cardW = (panelW - gap * (num + 1)) / num;
-  const cardH = panelH - 120;
+  const gap = 18;
+  const cardW = panelW - 60;
+  const cardH = 110;
+  const startY = py + 100;
 
   for (let i = 0; i < num; i++) {
-    const cx = px + gap + i * (cardW + gap);
-    const cy = py + 90;
+    const cx = px + 30;
+    const cy = startY + i * (cardH + gap);
     const choice = choices[i];
 
-    // Card background - highlight on hover
+    // Check hover
     const isHovered =
       mouseX >= cx &&
       mouseX <= cx + cardW &&
       mouseY >= cy &&
       mouseY <= cy + cardH;
 
+    // Card shadow
     if (isHovered) {
-      fill(60);
-      stroke(100, 200, 255);
+      fill(0, 150);
+      rect(cx + 4, cy + 4, cardW, cardH, 10);
+    }
+
+    // Card background with gradient
+    if (isHovered) {
+      // Animated glow effect
+      fill(55, 65, 85);
+      stroke(120, 220, 255);
       strokeWeight(3);
+      // Outer glow
+      for (let g = 0; g < 3; g++) {
+        stroke(120, 220, 255, 80 - g * 25);
+        strokeWeight(3 + g * 2);
+        rect(cx, cy, cardW, cardH, 10);
+      }
+      noStroke();
+      fill(55, 65, 85);
     } else {
-      fill(45);
-      stroke(70);
+      fill(38, 42, 52);
+      stroke(60, 70, 90);
       strokeWeight(1);
     }
-    rect(cx, cy, cardW, cardH, 8);
+    rect(cx, cy, cardW, cardH, 10);
     noStroke();
+
+    // Left accent bar
+    const accentColor = isHovered ? color(120, 220, 255) : color(80, 140, 200);
+    fill(accentColor);
+    rect(cx + 8, cy + 8, 4, cardH - 16, 2);
 
     // Spell name
     fill(255);
-    textAlign(CENTER, TOP);
-    textSize(16);
-    text(choice.name, cx + cardW / 2, cy + 12);
+    textAlign(LEFT, TOP);
+    textSize(isHovered ? 19 : 18);
+    text(choice.name, cx + 24, cy + 14);
 
     // Description
     textSize(12);
-    fill(200);
+    fill(isHovered ? 220 : 190);
     const lines = choice.desc.split("\n");
-    let descY = cy + 40;
+    let descY = cy + 42;
     for (const line of lines) {
-      text(line, cx + cardW / 2, descY);
-      descY += 16;
+      text(line, cx + 24, descY);
+      descY += 17;
     }
 
     // Details box
-    fill(40);
-    rect(cx + 8, cy + cardH - 80, cardW - 16, 50, 4);
-    fill(100, 200, 255);
+    const detailBoxX = cx + cardW - 160;
+    const detailBoxY = cy + cardH - 32;
+    fill(isHovered ? 70 : 50);
+    rect(detailBoxX, detailBoxY, 148, 24, 4);
+    if (isHovered) {
+      fill(140, 220, 255);
+    } else {
+      fill(100, 180, 230);
+    }
+    textAlign(CENTER, CENTER);
     textSize(11);
-    text(choice.details, cx + cardW / 2, cy + cardH - 65);
+    text(choice.details, detailBoxX + 74, detailBoxY + 12);
 
-    // Key hint
-    fill(160);
-    textSize(13);
-    text(`Press ${i + 1} or Click`, cx + cardW / 2, cy + cardH - 22);
+    // Key hint with icon
+    fill(isHovered ? 200 : 140);
+    textSize(11);
+    textAlign(RIGHT, CENTER);
+    text(`[${i + 1}]`, cx + cardW - 14, cy + 18);
   }
 }
 
@@ -233,40 +266,106 @@ function chooseUpgrade(index) {
 }
 
 function renderLevelUpModal() {
-  fill(0, 180);
+  background(20);
+  fill(0, 220);
   rect(0, 0, width, height);
-  const panelW = min(680, width - 80);
-  const panelH = 240;
+
+  const panelW = min(500, width - 60);
+  const panelH = min(height - 60, 650);
   const px = (width - panelW) / 2;
   const py = (height - panelH) / 2;
-  fill(30);
-  rect(px, py, panelW, panelH, 10);
-  fill(255);
-  textAlign(CENTER, TOP);
-  textSize(18);
-  text("Choose a spell to level up", width / 2, py + 16);
 
-  const num = game.pendingChoices.length;
-  const gap = 20;
-  const cardW = (panelW - gap * (num + 1)) / num;
-  const cardH = panelH - 70;
+  // Panel background with gradient effect
+  fill(25);
+  stroke(60, 80, 120);
+  strokeWeight(2);
+  rect(px, py, panelW, panelH, 12);
+  noStroke();
+
+  // Title with glow effect
+  fill(255, 220, 100);
+  textAlign(CENTER, TOP);
+  textSize(28);
+  text("⚡ LEVEL UP! ⚡", width / 2, py + 24);
+
+  fill(180, 200, 220);
+  textSize(13);
+  text("Choose an upgrade to enhance your power", width / 2, py + 60);
+
+  // Upgrade cards - TOP DOWN layout
+  const choices = game.pendingChoices;
+  const num = choices.length;
+  const gap = 18;
+  const cardW = panelW - 60;
+  const cardH = 110;
+  const startY = py + 100;
+
   for (let i = 0; i < num; i++) {
-    const cx = px + gap + i * (cardW + gap);
-    const cy = py + 50;
-    fill(45);
-    rect(cx, cy, cardW, cardH, 8);
-    const choice = game.pendingChoices[i];
+    const cx = px + 30;
+    const cy = startY + i * (cardH + gap);
+    const choice = choices[i];
+
+    // Check hover
+    const isHovered =
+      mouseX >= cx &&
+      mouseX <= cx + cardW &&
+      mouseY >= cy &&
+      mouseY <= cy + cardH;
+
+    // Card shadow
+    if (isHovered) {
+      fill(0, 150);
+      rect(cx + 4, cy + 4, cardW, cardH, 10);
+    }
+
+    // Card background with gradient
+    if (isHovered) {
+      // Animated glow effect
+      fill(55, 65, 85);
+      stroke(255, 220, 100);
+      strokeWeight(3);
+      // Outer glow
+      for (let g = 0; g < 3; g++) {
+        stroke(255, 220, 100, 80 - g * 25);
+        strokeWeight(3 + g * 2);
+        rect(cx, cy, cardW, cardH, 10);
+      }
+      noStroke();
+      fill(55, 65, 85);
+    } else {
+      fill(38, 42, 52);
+      stroke(60, 70, 90);
+      strokeWeight(1);
+    }
+    rect(cx, cy, cardW, cardH, 10);
+    noStroke();
+
+    // Left accent bar
+    const accentColor = isHovered ? color(255, 220, 100) : color(100, 150, 200);
+    fill(accentColor);
+    rect(cx + 8, cy + 8, 4, cardH - 16, 2);
+
+    // Spell name
     fill(255);
-    textAlign(CENTER, TOP);
-    textSize(16);
-    text(choice.name, cx + cardW / 2, cy + 10);
+    textAlign(LEFT, TOP);
+    textSize(isHovered ? 19 : 18);
+    text(choice.name, cx + 24, cy + 14);
+
+    // Description
     textSize(12);
-    fill(200);
-    text(choice.desc, cx + cardW / 2, cy + 40);
-    // hint
-    fill(160);
+    fill(isHovered ? 220 : 190);
+    const lines = choice.desc.split("\n");
+    let descY = cy + 42;
+    for (const line of lines) {
+      text(line, cx + 24, descY);
+      descY += 17;
+    }
+
+    // Key hint with icon
+    fill(isHovered ? 200 : 140);
     textSize(11);
-    text(`Click or press ${i + 1}`, cx + cardW / 2, cy + cardH - 22);
+    textAlign(RIGHT, CENTER);
+    text(`[${i + 1}]`, cx + cardW - 14, cy + 18);
   }
 }
 
@@ -274,18 +373,19 @@ function mousePressed() {
   // Handle spell selection at start
   if (game.state === "spellSelect") {
     const choices = getStartingSpellChoices();
-    const panelW = min(800, width - 60);
-    const panelH = 380;
+    const panelW = min(500, width - 60);
+    const panelH = min(height - 60, 850);
     const px = (width - panelW) / 2;
     const py = (height - panelH) / 2;
     const num = choices.length;
-    const gap = 16;
-    const cardW = (panelW - gap * (num + 1)) / num;
-    const cardH = panelH - 120;
+    const gap = 18;
+    const cardW = panelW - 60;
+    const cardH = 110;
+    const startY = py + 100;
 
     for (let i = 0; i < num; i++) {
-      const cx = px + gap + i * (cardW + gap);
-      const cy = py + 90;
+      const cx = px + 30;
+      const cy = startY + i * (cardH + gap);
       if (
         mouseX >= cx &&
         mouseX <= cx + cardW &&
@@ -301,17 +401,19 @@ function mousePressed() {
 
   // Handle level up choices
   if (game.state !== "levelup") return;
-  const panelW = min(680, width - 80);
-  const panelH = 240;
+  const panelW = min(500, width - 60);
+  const panelH = min(height - 60, 650);
   const px = (width - panelW) / 2;
   const py = (height - panelH) / 2;
   const num = game.pendingChoices.length;
-  const gap = 20;
-  const cardW = (panelW - gap * (num + 1)) / num;
-  const cardH = panelH - 70;
+  const gap = 18;
+  const cardW = panelW - 60;
+  const cardH = 110;
+  const startY = py + 100;
+
   for (let i = 0; i < num; i++) {
-    const cx = px + gap + i * (cardW + gap);
-    const cy = py + 50;
+    const cx = px + 30;
+    const cy = startY + i * (cardH + gap);
     if (
       mouseX >= cx &&
       mouseX <= cx + cardW &&
