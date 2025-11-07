@@ -18,6 +18,8 @@ function draw() {
 
 function updateGame() {
   handleInput();
+  game.camera.x = game.player.x;
+  game.camera.y = game.player.y;
   autoShoot();
   updateProjectiles();
   maybeSpawnEnemies();
@@ -31,11 +33,16 @@ function updateGame() {
 }
 
 function renderGame() {
+  push();
+  const cam = game.camera;
+  translate(width / 2 - cam.x, height / 2 - cam.y);
+  renderGround();
   renderOrbs();
   renderEnemies();
   renderProjectiles();
   renderPlayer();
   renderBlades();
+  pop();
   renderUI();
   if (game.state === 'levelup') {
     renderLevelUpModal();
@@ -44,3 +51,22 @@ function renderGame() {
   }
 }
 // Rendering delegations remain here for composition
+
+function renderGround() {
+  const grid = 140;
+  const cam = game.camera;
+  const minX = cam.x - width / 2 - grid;
+  const maxX = cam.x + width / 2 + grid;
+  const minY = cam.y - height / 2 - grid;
+  const maxY = cam.y + height / 2 + grid;
+  const startX = floor(minX / grid) * grid;
+  const startY = floor(minY / grid) * grid;
+  stroke(45);
+  strokeWeight(1);
+  for (let x = startX; x <= maxX; x += grid) {
+    line(x, minY - grid, x, maxY + grid);
+  }
+  for (let y = startY; y <= maxY; y += grid) {
+    line(minX - grid, y, maxX + grid, y);
+  }
+}

@@ -1,10 +1,15 @@
 // Projectiles update and rendering
 function updateProjectiles() {
+  const p = game.player;
+  const maxDistance = max(width, height) * 1.6;
+  const maxDistanceSq = maxDistance * maxDistance;
   for (const pr of game.projectiles) {
     if (!pr.alive) continue;
     pr.x += pr.vx;
     pr.y += pr.vy;
-    if (pr.x < -20 || pr.x > width + 20 || pr.y < -20 || pr.y > height + 20) {
+    const dx = pr.x - p.x;
+    const dy = pr.y - p.y;
+    if ((dx * dx + dy * dy) > maxDistanceSq) {
       pr.alive = false;
       continue;
     }

@@ -13,13 +13,12 @@ function maybeSpawnEnemies() {
 }
 
 function spawnEnemy() {
-  const margin = 30;
-  const edge = floor(random(4));
-  let x = 0, y = 0;
-  if (edge === 0) { x = random(-margin, 0); y = random(height); }
-  else if (edge === 1) { x = random(width); y = random(-margin, 0); }
-  else if (edge === 2) { x = random(width, width + margin); y = random(height); }
-  else { x = random(width); y = random(height, height + margin); }
+  const p = game.player;
+  const baseRadius = max(width, height) * 0.6;
+  const spawnRadius = baseRadius + random(baseRadius * 0.6, baseRadius * 1.4);
+  const angle = random(TWO_PI);
+  const x = p.x + cos(angle) * spawnRadius;
+  const y = p.y + sin(angle) * spawnRadius;
   const baseHp = 20 + game.timeSeconds * 2.5;
   const baseSpeed = 1.1 + min(1.4, game.timeSeconds / 90);
   const enemy = {
@@ -59,7 +58,7 @@ function updateEnemies() {
       }
     }
   }
-  game.enemies = game.enemies.filter(e => e.alive || inBounds(e.x, e.y, -40, -40, width + 40, height + 40));
+  game.enemies = game.enemies.filter(e => e.alive);
 }
 
 function renderEnemies() {

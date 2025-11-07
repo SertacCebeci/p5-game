@@ -19,8 +19,8 @@ function resetGame() {
       difficulty: 0 // increases slowly over time
     },
     player: {
-      x: width / 2,
-      y: height / 2,
+      x: 0,
+      y: 0,
       radius: 14,
       speed: 3,
       color: color(30, 144, 255),
@@ -35,6 +35,10 @@ function resetGame() {
       level: 1,
       exp: 0,
       expToLevel: 30
+    },
+    camera: {
+      x: 0,
+      y: 0
     },
     spells: {
       magicBolt: { level: 1 },
