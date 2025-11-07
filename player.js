@@ -13,44 +13,6 @@ function handleInput() {
     p.y += vy * p.speed;
   }
   if (game.player.iframes > 0) game.player.iframes--;
-  if (game.player.fireCooldown > 0) game.player.fireCooldown--;
-}
-
-function autoShoot() {
-  const p = game.player;
-  if (game.enemies.length === 0) return;
-  if (p.fireCooldown > 0) return;
-  const stats = getMagicBoltStats(game.spells.magicBolt.level);
-  let nearest = null;
-  let bestDist = Infinity;
-  for (const e of game.enemies) {
-    const d2 = (e.x - p.x) ** 2 + (e.y - p.y) ** 2;
-    if (d2 < bestDist) {
-      bestDist = d2;
-      nearest = e;
-    }
-  }
-  if (!nearest) return;
-  const dx = nearest.x - p.x;
-  const dy = nearest.y - p.y;
-  const d = sqrt(dx * dx + dy * dy) || 1;
-  const vx = (dx / d) * stats.speed;
-  const vy = (dy / d) * stats.speed;
-
-  const proj = {
-    x: p.x,
-    y: p.y,
-    vx,
-    vy,
-    radius: stats.radius,
-    damage: stats.damage,
-    pierce: stats.pierce,
-    alive: true,
-    color: stats.color
-  };
-  game.projectiles.push(proj);
-
-  p.fireCooldown = stats.cooldownFrames;
 }
 
 function renderPlayer() {
