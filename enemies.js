@@ -94,4 +94,23 @@ function renderEnemies() {
   }
 }
 
+function applyDamageToEnemy(enemy, damage) {
+  if (!enemy.alive) return false;
+  enemy.hp -= damage;
+  if (enemy.hp <= 0) {
+    killEnemy(enemy);
+    return true;
+  }
+  return false;
+}
 
+function killEnemy(enemy) {
+  if (!enemy.alive) return;
+  enemy.alive = false;
+  if (game && game.player) {
+    game.player.exp += enemy.killExp ?? 0;
+  }
+  if (enemy.value > 0) {
+    dropOrb(enemy.x, enemy.y, enemy.value);
+  }
+}

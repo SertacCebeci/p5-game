@@ -21,16 +21,8 @@ function updateBlades() {
     // Use module-scoped cooldown tracking without requiring enemy initialization
     const lastHitFrame = e._lastMagicBladesHitFrame ?? -1e9;
     if (hit && (game.frame - lastHitFrame > b.hitCooldownFrames)) {
-      e.hp -= b.damage;
+      applyDamageToEnemy(e, b.damage);
       e._lastMagicBladesHitFrame = game.frame;
-      if (e.hp <= 0) {
-        e.alive = false;
-        // small direct EXP on kill
-        if (game && game.player) {
-          game.player.exp += (e.killExp ?? 1);
-        }
-        dropOrb(e.x, e.y, e.value);
-      }
     }
   }
 }
@@ -65,5 +57,3 @@ function getBladesStats(level) {
   const hitCooldownFrames = max(6, 18 - floor(lvl / 2));
   return { count, radius, damage, hitCooldownFrames };
 }
-
-
