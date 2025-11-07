@@ -18,9 +18,13 @@ function resetGame() {
       lastSpawnFrame: 0,
       difficulty: 0 // increases slowly over time
     },
+    camera: {
+      x: 0,
+      y: 0
+    },
     player: {
-      x: width / 2,
-      y: height / 2,
+      x: 0,
+      y: 0,
       radius: 14,
       speed: 3,
       color: color(30, 144, 255),
