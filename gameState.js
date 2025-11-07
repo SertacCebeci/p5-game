@@ -8,6 +8,10 @@ function resetGame() {
     state: 'playing', // 'playing' | 'levelup' | 'gameover'
     frame: 0,
     timeSeconds: 0,
+    camera: {
+      x: 0,
+      y: 0
+    },
     enemies: [],
     projectiles: [],
     orbs: [],

@@ -4,7 +4,10 @@ function updateProjectiles() {
     if (!pr.alive) continue;
     pr.x += pr.vx;
     pr.y += pr.vy;
-    if (pr.x < -20 || pr.x > width + 20 || pr.y < -20 || pr.y > height + 20) {
+    const dx = pr.x - game.player.x;
+    const dy = pr.y - game.player.y;
+    const maxDist = max(width, height) * 1.6;
+    if (dx * dx + dy * dy > maxDist * maxDist) {
       pr.alive = false;
       continue;
     }

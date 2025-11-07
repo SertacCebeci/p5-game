@@ -12,10 +12,14 @@ function handleInput() {
     p.x += vx * p.speed;
     p.y += vy * p.speed;
   }
-  p.x = constrain(p.x, p.radius, width - p.radius);
-  p.y = constrain(p.y, p.radius, height - p.radius);
   if (game.player.iframes > 0) game.player.iframes--;
   if (game.player.fireCooldown > 0) game.player.fireCooldown--;
+}
+
+function updateCamera() {
+  const p = game.player;
+  game.camera.x = p.x - width / 2;
+  game.camera.y = p.y - height / 2;
 }
 
 function autoShoot() {
