@@ -6,14 +6,14 @@ function setup() {
   const aspectRatio = 16 / 9;
   let canvasWidth = windowWidth - 40; // Account for padding
   let canvasHeight = windowHeight - 40;
-  
+
   // Maintain aspect ratio
   if (canvasWidth / canvasHeight > aspectRatio) {
     canvasWidth = canvasHeight * aspectRatio;
   } else {
     canvasHeight = canvasWidth / aspectRatio;
   }
-  
+
   createCanvas(canvasWidth, canvasHeight);
   resetGame();
 }
@@ -23,13 +23,13 @@ function windowResized() {
   const aspectRatio = 16 / 9;
   let canvasWidth = windowWidth - 40;
   let canvasHeight = windowHeight - 40;
-  
+
   if (canvasWidth / canvasHeight > aspectRatio) {
     canvasWidth = canvasHeight * aspectRatio;
   } else {
     canvasHeight = canvasWidth / aspectRatio;
   }
-  
+
   resizeCanvas(canvasWidth, canvasHeight);
 }
 
