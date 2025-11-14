@@ -13,8 +13,12 @@ function updateBlades() {
       const angle = game.frame * b.rotationSpeed + (TWO_PI * k) / b.count;
       const bx = p.x + cos(angle) * b.radiusFromPlayer;
       const by = p.y + sin(angle) * b.radiusFromPlayer;
-      const sumR = e.radius + b.bladeCircleRadius;
-      if ((bx - e.x) ** 2 + (by - e.y) ** 2 <= sumR * sumR) {
+      // Ellipse-based collision: treat blade as an ellipse expanded by enemy radius
+      const dx = e.x - bx;
+      const dy = e.y - by;
+      const rx = b.bladeRadiusX + e.radius;
+      const ry = b.bladeRadiusY + e.radius;
+      if ((dx * dx) / (rx * rx) + (dy * dy) / (ry * ry) <= 1) {
         hit = true;
         break;
       }
@@ -40,11 +44,16 @@ function renderBlades() {
     const angle = game.frame * b.rotationSpeed + (TWO_PI * k) / b.count;
     const bx = p.x + cos(angle) * b.radiusFromPlayer;
     const by = p.y + sin(angle) * b.radiusFromPlayer;
+
+    // Draw blade as an ellipse oriented tangentially around the player:
+    // the long axis is perpendicular (90°) to the line from player center to blade center.
+    push();
+    translate(bx, by);
+    rotate(angle + HALF_PI);
     noStroke();
     fill(200, 240, 255);
-    circle(bx, by, b.bladeCircleRadius * 2);
-    stroke(180, 220, 255);
-    noFill();
+    ellipse(0, 0, b.bladeRadiusX * 2, b.bladeRadiusY * 2);
+    pop();
   }
 }
 
@@ -54,6 +63,9 @@ function getBladesStats(level) {
   const count = min(6, lvl);
   const radiusFromPlayer = 90;
   const bladeCircleRadius = 8 + floor(max(0, lvl - 1) / 3) * 2;
+  // Ellipse radii derived from the base circle radius (slightly wider + thinner)
+  const bladeRadiusX = bladeCircleRadius * 1.9;
+  const bladeRadiusY = bladeCircleRadius * 0.7;
   const rotationSpeed = 0.045 + lvl * 0.01;
   const damage = 20 + lvl * 5;
   const hitCooldownFrames = max(6, 18 - floor(lvl / 2));
@@ -61,6 +73,8 @@ function getBladesStats(level) {
     count,
     radiusFromPlayer,
     bladeCircleRadius,
+    bladeRadiusX,
+    bladeRadiusY,
     rotationSpeed,
     damage,
     hitCooldownFrames,
