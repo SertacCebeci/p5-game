@@ -1,4 +1,12 @@
 // Magic Bolt spell logic and behaviors
+let magicBoltColor;
+function getMagicBoltColor() {
+  if (!magicBoltColor) {
+    magicBoltColor = color(255, 235, 140);
+  }
+  return magicBoltColor;
+}
+
 function updateMagicBoltSpell() {
   const spell = game.spells && game.spells.magicBolt;
   if (!spell || spell.level <= 0) return;
@@ -51,7 +59,7 @@ function createMagicBoltProjectile({ x, y, vx, vy, stats }) {
     pierce: stats.pierce,
     alive: true,
     color: stats.color,
-    hitEnemies: new Set(), // Track which enemies have been hit
+    hitEnemies: stats.pierce > 0 ? new Set() : null, // Track which enemies have been hit
   };
 }
 
@@ -72,6 +80,6 @@ function getMagicBoltStats(level) {
     speed,
     radius,
     pierce,
-    color: color(255, 235, 140),
+    color: getMagicBoltColor(),
   };
 }

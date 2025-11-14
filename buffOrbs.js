@@ -1,4 +1,16 @@
 // Buff orbs logic - spawn periodically and give temporary power-ups
+const BUFF_ORB_COLORS = {};
+
+function getBuffColor(type) {
+  if (!BUFF_ORB_COLORS[type]) {
+    if (type === "damage") {
+      BUFF_ORB_COLORS[type] = color(220, 60, 60);
+    } else {
+      BUFF_ORB_COLORS[type] = color(255, 255, 255);
+    }
+  }
+  return BUFF_ORB_COLORS[type];
+}
 
 function spawnBuffOrb() {
   const p = game.player;
@@ -13,7 +25,7 @@ function spawnBuffOrb() {
     y,
     radius: 12,
     alive: true,
-    color: color(220, 60, 60), // Reddish color for damage buff
+    color: getBuffColor("damage"), // Reddish color for damage buff
     type: "damage", // buff type
     duration: 600, // 10 seconds at 60fps
     multiplier: 4, // 4x damage
@@ -29,6 +41,8 @@ function maybeSpawnBuffOrb() {
 
 function updateBuffOrbs() {
   const p = game.player;
+  const pickupRadius = p.pickupRadius * 1.3;
+  const pickupRadiusSq = pickupRadius * pickupRadius;
 
   // Update buff orb positions and check for pickup
   for (const orb of game.buffOrbs) {
@@ -37,34 +51,43 @@ function updateBuffOrbs() {
     // Attract to player when close - use player's pickup radius with a 1.3x multiplier for buff orbs
     const dx = p.x - orb.x;
     const dy = p.y - orb.y;
-    const d = sqrt(dx * dx + dy * dy) || 1;
-    const attractRange = p.pickupRadius * 1.3; // Buff orbs have slightly larger pickup range
+    if (abs(dx) > pickupRadius || abs(dy) > pickupRadius) continue;
 
-    if (d < attractRange) {
-      const s = map(d, 0, attractRange, 5, 1);
-      orb.x += (dx / d) * s;
-      orb.y += (dy / d) * s;
+    const distSq = dx * dx + dy * dy;
+    if (distSq < pickupRadiusSq) {
+      const dist = sqrt(distSq) || 1;
+      const strength = 1 + (1 - dist / pickupRadius) * 4;
+      const invDist = 1 / dist;
+      orb.x += dx * invDist * strength;
+      orb.y += dy * invDist * strength;
+    } else {
+      continue;
     }
 
     // Check collision with player
     const sumR = orb.radius + p.radius;
-    if ((p.x - orb.x) ** 2 + (p.y - orb.y) ** 2 <= sumR * sumR) {
+    const ndx = p.x - orb.x;
+    const ndy = p.y - orb.y;
+    if (ndx * ndx + ndy * ndy <= sumR * sumR) {
       orb.alive = false;
       applyBuff(orb);
     }
   }
 
   // Update active buffs
-  for (let i = p.activeBuffs.length - 1; i >= 0; i--) {
-    const buff = p.activeBuffs[i];
+  const buffs = p.activeBuffs;
+  let writeIndex = 0;
+  for (let i = 0; i < buffs.length; i++) {
+    const buff = buffs[i];
     buff.remainingFrames--;
-    if (buff.remainingFrames <= 0) {
-      p.activeBuffs.splice(i, 1);
+    if (buff.remainingFrames > 0) {
+      buffs[writeIndex++] = buff;
     }
   }
+  buffs.length = writeIndex;
 
   // Clean up dead orbs
-  game.buffOrbs = game.buffOrbs.filter((o) => o.alive);
+  compactAlive(game.buffOrbs);
 }
 
 function applyBuff(orbData) {
@@ -94,10 +117,19 @@ function getDamageMultiplier() {
 
 function renderBuffOrbs() {
   noStroke();
+  const view = getWorldViewBounds(80);
 
   // Render buff orbs with pulsing effect
   for (const orb of game.buffOrbs) {
-    if (!orb.alive) continue;
+    if (
+      !orb.alive ||
+      orb.x < view.left ||
+      orb.x > view.right ||
+      orb.y < view.top ||
+      orb.y > view.bottom
+    ) {
+      continue;
+    }
 
     // Pulsing effect
     const pulse = 1 + sin(game.frame * 0.1) * 0.2;

@@ -1,4 +1,11 @@
 // Chaining Bolt spell logic - projectile that chains between enemies
+let chainingBoltColor;
+function getChainingBoltColor() {
+  if (!chainingBoltColor) {
+    chainingBoltColor = color(100, 255, 200);
+  }
+  return chainingBoltColor;
+}
 
 function updateChainingBoltSpell() {
   const spell = game.spells && game.spells.chainingBolt;
@@ -58,8 +65,9 @@ function createChainingBoltProjectile({ x, y, targetEnemy, stats }) {
 
 function updateChainingBoltProjectiles() {
   const cullBounds = getWorldViewBounds(600);
-
-  for (const bolt of game.chainingBoltProjectiles) {
+  const bolts = game.chainingBoltProjectiles;
+  for (let i = 0; i < bolts.length; i++) {
+    const bolt = bolts[i];
     if (!bolt.alive) continue;
 
     // Check if current target is still valid
@@ -117,9 +125,7 @@ function updateChainingBoltProjectiles() {
     }
   }
 
-  game.chainingBoltProjectiles = game.chainingBoltProjectiles.filter(
-    (b) => b.alive
-  );
+  compactAlive(game.chainingBoltProjectiles);
 }
 
 function findNextChainingBoltTarget(bolt) {
@@ -166,7 +172,7 @@ function getChainingBoltStats(level) {
     speed,
     radius,
     chains,
-    color: color(100, 255, 200), // Cyan-green color
+    color: getChainingBoltColor(), // Cyan-green color
   };
 }
 

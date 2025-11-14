@@ -57,7 +57,9 @@ function spawnEnemy() {
 
 function updateEnemies() {
   const p = game.player;
-  for (const e of game.enemies) {
+  const enemies = game.enemies;
+  for (let i = 0; i < enemies.length; i++) {
+    const e = enemies[i];
     if (!e.alive) continue;
 
     // Update slowdown effect
@@ -91,18 +93,21 @@ function updateEnemies() {
     }
   }
   const cullBounds = getWorldViewBounds(800);
-  game.enemies = game.enemies.filter(
-    (e) =>
-      e.alive ||
-      inBounds(
-        e.x,
-        e.y,
-        cullBounds.left,
-        cullBounds.top,
-        cullBounds.right,
-        cullBounds.bottom
-      )
-  );
+  let writeIndex = 0;
+  for (let i = 0; i < enemies.length; i++) {
+    const e = enemies[i];
+    if (
+      !e.alive ||
+      e.x < cullBounds.left ||
+      e.x > cullBounds.right ||
+      e.y < cullBounds.top ||
+      e.y > cullBounds.bottom
+    ) {
+      continue;
+    }
+    enemies[writeIndex++] = e;
+  }
+  enemies.length = writeIndex;
 }
 
 function renderEnemies() {

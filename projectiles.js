@@ -1,10 +1,16 @@
 // Projectiles update and rendering
 function updateProjectiles() {
   const cullBounds = getWorldViewBounds(400);
-  for (const pr of game.projectiles) {
+  const projectiles = game.projectiles;
+  const enemies = game.enemies;
+
+  for (let i = 0; i < projectiles.length; i++) {
+    const pr = projectiles[i];
     if (!pr.alive) continue;
+
     pr.x += pr.vx;
     pr.y += pr.vy;
+
     if (
       pr.x < cullBounds.left ||
       pr.x > cullBounds.right ||
@@ -14,15 +20,20 @@ function updateProjectiles() {
       pr.alive = false;
       continue;
     }
-    for (const e of game.enemies) {
+
+    const hitEnemies = pr.hitEnemies;
+    const sumRadiusBase = pr.radius;
+    for (let j = 0; j < enemies.length; j++) {
+      const e = enemies[j];
       if (!e.alive) continue;
-      // Skip if this projectile has already hit this enemy
-      if (pr.hitEnemies && pr.hitEnemies.has(e)) continue;
-      const distSq = (e.x - pr.x) ** 2 + (e.y - pr.y) ** 2;
-      if (distSq <= (e.radius + pr.radius) ** 2) {
+      if (hitEnemies && hitEnemies.has(e)) continue;
+
+      const dx = e.x - pr.x;
+      const dy = e.y - pr.y;
+      const sumR = e.radius + sumRadiusBase;
+      if (dx * dx + dy * dy <= sumR * sumR) {
         damageEnemy(e, pr.damage);
-        // Track that we've hit this enemy
-        if (pr.hitEnemies) pr.hitEnemies.add(e);
+        if (hitEnemies) hitEnemies.add(e);
         if (pr.pierce > 0) {
           pr.pierce--;
         } else {
@@ -32,13 +43,24 @@ function updateProjectiles() {
       }
     }
   }
-  game.projectiles = game.projectiles.filter((p) => p.alive);
+
+  compactAlive(projectiles);
 }
 
 function renderProjectiles() {
+  if (!game.projectiles.length) return;
+  const view = getWorldViewBounds(40);
   noStroke();
   for (const pr of game.projectiles) {
-    if (!pr.alive) continue;
+    if (
+      !pr.alive ||
+      pr.x < view.left ||
+      pr.x > view.right ||
+      pr.y < view.top ||
+      pr.y > view.bottom
+    ) {
+      continue;
+    }
     fill(pr.color);
     circle(pr.x, pr.y, pr.radius * 2);
   }

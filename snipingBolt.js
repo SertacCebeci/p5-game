@@ -1,4 +1,12 @@
 // Sniping Bolt spell logic and behaviors
+let snipingBoltColor;
+function getSnipingBoltColor() {
+  if (!snipingBoltColor) {
+    snipingBoltColor = color(255, 100, 50);
+  }
+  return snipingBoltColor;
+}
+
 function updateSnipingBoltSpell() {
   const spell = game.spells && game.spells.snipingBolt;
   if (!spell || spell.level <= 0) return;
@@ -51,7 +59,7 @@ function createSnipingBoltProjectile({ x, y, vx, vy, stats }) {
     pierce: stats.pierce,
     alive: true,
     color: stats.color,
-    hitEnemies: new Set(), // Track which enemies have been hit
+    hitEnemies: stats.pierce > 0 ? new Set() : null, // Track which enemies have been hit
     type: "snipingBolt", // Mark as sniping bolt for special rendering
   };
 }
@@ -82,7 +90,7 @@ function getSnipingBoltStats(level) {
     speed,
     radius,
     pierce,
-    color: color(255, 100, 50), // Orange-red for sniping bolt
+    color: getSnipingBoltColor(), // Orange-red for sniping bolt
   };
 }
 
@@ -95,8 +103,11 @@ function renderSnipingBoltProjectiles() {
     stroke(pr.color.levels[0], pr.color.levels[1], pr.color.levels[2], 80);
     strokeWeight(2);
     const trailLength = 20;
-    const trailX = pr.x - pr.vx * (trailLength / pr.vx);
-    const trailY = pr.y - pr.vy * (trailLength / pr.vy);
+    const speed = sqrt(pr.vx * pr.vx + pr.vy * pr.vy) || 1;
+    const dirX = pr.vx / speed;
+    const dirY = pr.vy / speed;
+    const trailX = pr.x - dirX * trailLength;
+    const trailY = pr.y - dirY * trailLength;
     line(trailX, trailY, pr.x, pr.y);
 
     // Draw bullet

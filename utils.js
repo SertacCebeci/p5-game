@@ -16,3 +16,16 @@ function getWorldViewBounds(expand = 0) {
     height: halfH * 2,
   };
 }
+
+function compactAlive(list) {
+  if (!list || list.length === 0) return list;
+  let writeIndex = 0;
+  for (let i = 0; i < list.length; i++) {
+    const item = list[i];
+    if (item && item.alive) {
+      list[writeIndex++] = item;
+    }
+  }
+  list.length = writeIndex;
+  return list;
+}
