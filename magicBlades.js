@@ -10,10 +10,10 @@ function updateBlades() {
     // Check against each blade's position
     let hit = false;
     for (let k = 0; k < b.count; k++) {
-      const angle = game.frame * 0.06 + (TWO_PI * k) / b.count;
-      const bx = p.x + cos(angle) * b.radius;
-      const by = p.y + sin(angle) * b.radius;
-      const sumR = e.radius + 6;
+      const angle = game.frame * b.rotationSpeed + (TWO_PI * k) / b.count;
+      const bx = p.x + cos(angle) * b.radiusFromPlayer;
+      const by = p.y + sin(angle) * b.radiusFromPlayer;
+      const sumR = e.radius + b.bladeCircleRadius;
       if ((bx - e.x) ** 2 + (by - e.y) ** 2 <= sumR * sumR) {
         hit = true;
         break;
@@ -37,13 +37,12 @@ function renderBlades() {
   strokeWeight(3);
   noFill();
   for (let k = 0; k < b.count; k++) {
-    const angle = game.frame * 0.06 + (TWO_PI * k) / b.count;
-    const bx = p.x + cos(angle) * b.radius;
-    const by = p.y + sin(angle) * b.radius;
-    line(p.x, p.y, bx, by);
+    const angle = game.frame * b.rotationSpeed + (TWO_PI * k) / b.count;
+    const bx = p.x + cos(angle) * b.radiusFromPlayer;
+    const by = p.y + sin(angle) * b.radiusFromPlayer;
     noStroke();
     fill(200, 240, 255);
-    circle(bx, by, 12);
+    circle(bx, by, b.bladeCircleRadius * 2);
     stroke(180, 220, 255);
     noFill();
   }
@@ -53,8 +52,17 @@ function renderBlades() {
 function getBladesStats(level) {
   const lvl = max(0, floor(level || 0));
   const count = min(6, lvl);
-  const radius = 40 + max(0, lvl - 1) * 2;
-  const damage = 10 + lvl * 3;
+  const radiusFromPlayer = 90;
+  const bladeCircleRadius = 8 + floor(max(0, lvl - 1) / 3) * 2;
+  const rotationSpeed = 0.045 + lvl * 0.01;
+  const damage = 20 + lvl * 5;
   const hitCooldownFrames = max(6, 18 - floor(lvl / 2));
-  return { count, radius, damage, hitCooldownFrames };
+  return {
+    count,
+    radiusFromPlayer,
+    bladeCircleRadius,
+    rotationSpeed,
+    damage,
+    hitCooldownFrames,
+  };
 }
