@@ -2,8 +2,35 @@
 // Controls: WASD/Arrows to move, Mouse click or keys [1-3] to pick upgrades, R to restart on game over
 
 function setup() {
-  createCanvas(960, 540);
+  // Create canvas that fits the window while maintaining aspect ratio
+  const aspectRatio = 16 / 9;
+  let canvasWidth = windowWidth - 40; // Account for padding
+  let canvasHeight = windowHeight - 40;
+  
+  // Maintain aspect ratio
+  if (canvasWidth / canvasHeight > aspectRatio) {
+    canvasWidth = canvasHeight * aspectRatio;
+  } else {
+    canvasHeight = canvasWidth / aspectRatio;
+  }
+  
+  createCanvas(canvasWidth, canvasHeight);
   resetGame();
+}
+
+function windowResized() {
+  // Handle window resize while maintaining aspect ratio
+  const aspectRatio = 16 / 9;
+  let canvasWidth = windowWidth - 40;
+  let canvasHeight = windowHeight - 40;
+  
+  if (canvasWidth / canvasHeight > aspectRatio) {
+    canvasWidth = canvasHeight * aspectRatio;
+  } else {
+    canvasHeight = canvasWidth / aspectRatio;
+  }
+  
+  resizeCanvas(canvasWidth, canvasHeight);
 }
 
 function draw() {
